@@ -150,11 +150,17 @@
          <item>
           <widget class="QGroupBox" name="groupBox_3">
            <property name="title">
-            <string>原始文本文件</string>
+            <string>文本文件（原始、编码、调制）</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
+            <item row="1" column="0">
+             <widget class="QTextBrowser" name="textBrowser_encoded"/>
+            </item>
             <item row="0" column="0">
              <widget class="QTextBrowser" name="textBrowser_txt"/>
+            </item>
+            <item row="2" column="0">
+             <widget class="QTextBrowser" name="textBrowser_modulated"/>
             </item>
            </layout>
           </widget>

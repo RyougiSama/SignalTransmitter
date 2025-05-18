@@ -1,5 +1,6 @@
 ﻿#include "mainwindow.h"
 #include "QFileDialog"
+#include "QMessageBox"
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
@@ -31,6 +32,22 @@ void MainWindow::on_btn_save_txt_clicked()
     QString file_name = QFileDialog::getSaveFileName(this, "Save TXT File", "", "Text Files (*.txt)");
     if (!file_name.isEmpty()) {
         txt_model_->SaveTxtFile(file_name);
+    }
+}
+
+void MainWindow::on_btn_encode_clicked()
+{
+    if (txt_model_->EncodeTxtFile(ui->comboBox_encoding->currentText())) {
+        // 以二进制形式显示编码后的数据，每个样本点为0或1
+        const auto &data = txt_model_->get_txt_encoded_data();
+        QString binStr;
+        for (uint8_t bit : data) {
+            binStr.append(QString::number(bit));
+        }
+        ui->textBrowser_encoded->setText(binStr.trimmed());
+        ui->btn_modulate->setEnabled(true);
+    } else {
+        QMessageBox::warning(this, "Encoding Error", "Failed to encode the text.");
     }
 }
 

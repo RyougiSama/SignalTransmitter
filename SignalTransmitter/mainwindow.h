@@ -23,4 +23,5 @@ private:
 private slots:
     void on_btn_load_txt_clicked();
     void on_btn_save_txt_clicked();
+    void on_btn_encode_clicked();
 };
