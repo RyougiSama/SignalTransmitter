@@ -18,10 +18,11 @@ public:
 
 private:
     Ui::MainWindowClass *ui;
-    TxtModel *txt_model_ = nullptr;
+    TxtModel *txt_model_;
 
 private slots:
     void on_btn_load_txt_clicked();
     void on_btn_save_txt_clicked();
     void on_btn_encode_clicked();
+    void on_btn_modulate_clicked();
 };

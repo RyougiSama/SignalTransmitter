@@ -108,11 +108,6 @@
               </item>
               <item>
                <property name="text">
-                <string>FSK</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>PSK</string>
                </property>
               </item>
@@ -153,14 +148,21 @@
             <string>文本文件（原始、编码、调制）</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
+            <item row="2" column="0">
+             <widget class="QTextBrowser" name="textBrowser_modulated"/>
+            </item>
             <item row="1" column="0">
              <widget class="QTextBrowser" name="textBrowser_encoded"/>
             </item>
             <item row="0" column="0">
              <widget class="QTextBrowser" name="textBrowser_txt"/>
             </item>
-            <item row="2" column="0">
-             <widget class="QTextBrowser" name="textBrowser_modulated"/>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_sample_rate">
+              <property name="text">
+               <string>当前采样率：</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
