@@ -62,34 +62,58 @@ void TxtModel::EncodeTxtFile(const QString &encode_t)
 
 void TxtModel::ModulateTxtFile(const QString &modulate_t)
 {
-    // 载波参数
+    // 根据采样率自动调整载波参数
     const double ask_high{ 1.0 }, ask_low{ 0.0 };       // ASK高低电平
-    const double fsk_f0{ 1000.0 };
-    const double psk_f{ 1000.0 };    // PSK载波频率
+    const double carrier_freq_factor = 0.1;  // 载波频率为采样率的10%
+    
+    // 载波参数 - 自动根据采样率调整
+    const double base_carrier_freq = kSampleRate * carrier_freq_factor;
+    const double ask_f0 = base_carrier_freq;    // ASK载波频率
+    const double psk_f = base_carrier_freq;     // PSK载波频率
+    
     const auto sample_rate{ kSampleRate };
     const auto samples_per_bit{ kSamplesPerBit };
-
+    
+    // 计算预期数据大小并预分配内存
+    const qsizetype expected_size = txt_encoded_data_.size() * samples_per_bit;
     txt_modulated_data.clear();
-
+    txt_modulated_data.reserve(expected_size);
+    
     if (modulate_t.compare("ASK", Qt::CaseInsensitive) == 0) {
         // 振幅键控
+        // 预计算一个比特周期内的正弦波形状
+        QList<double> high_pattern(samples_per_bit);
+        QList<double> low_pattern(samples_per_bit);
+
+        // 计算高电平和低电平的波形模板
+        for (qsizetype n = 0; n < samples_per_bit; ++n) {
+            double t = static_cast<double>(n) / sample_rate;
+            high_pattern[n] = ask_high * sin(2 * M_PI * ask_f0 * t);
+            low_pattern[n] = ask_low * sin(2 * M_PI * ask_f0 * t);
+        }
+
+        // 对每个比特应用预计算的波形模板
         for (auto bit : txt_encoded_data_) {
-            auto amplitude = (bit == 1) ? ask_high : ask_low;
-            for (auto n{ 0 }; n < samples_per_bit; ++n) {
-                auto t = n / sample_rate;
-                auto value = amplitude * sin(2 * M_PI * fsk_f0 * t);
-                txt_modulated_data.append(value);
-            }
+            const auto& pattern = (bit == 1) ? high_pattern : low_pattern;
+            txt_modulated_data.append(pattern);
         }
     } else if (modulate_t.compare("PSK", Qt::CaseInsensitive) == 0) {
         // 相位键控
+        // 预计算一个比特周期内的0相位和π相位正弦波形状
+        QList<double> phase0_pattern(samples_per_bit);
+        QList<double> phasePI_pattern(samples_per_bit);
+
+        // 计算两种相位的波形模板
+        for (qsizetype n = 0; n < samples_per_bit; ++n) {
+            double t = static_cast<double>(n) / sample_rate;
+            phase0_pattern[n] = sin(2 * M_PI * psk_f * t);
+            phasePI_pattern[n] = sin(2 * M_PI * psk_f * t + M_PI);
+        }
+
+        // 对每个比特应用预计算的波形模板
         for (auto bit : txt_encoded_data_) {
-            auto phase = (bit == 1) ? M_PI : 0.0;
-            for (auto n{ 0 }; n < samples_per_bit; ++n) {
-                auto t = n / sample_rate;
-                auto value = sin(2 * M_PI * psk_f * t + phase);
-                txt_modulated_data.append(value);
-            }
+            const auto& pattern = (bit == 1) ? phasePI_pattern : phase0_pattern;
+            txt_modulated_data.append(pattern);
         }
     }
 }

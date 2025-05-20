@@ -20,8 +20,8 @@ public:
     void EncodeTxtFile(const QString &encode_t);
     void ModulateTxtFile(const QString &modulate_t);
 
-    static constexpr double kSampleRate{ 16000.0 };
-    static constexpr qsizetype kSamplesPerBit { 1000 };
+    static constexpr double kSampleRate{ 800.0 };
+    static constexpr qsizetype kSamplesPerBit { 10 };
 
 private:
     QString txt_raw_data_;

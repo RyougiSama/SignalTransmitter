@@ -74,7 +74,7 @@ void TimeViewEncoded::UpdateView()
     }
 
     // 提前分配空间 - 每个比特需要2个点（起点和终点）来形成矩形波形
-    QVector<QPointF> points;
+    QList<QPointF> points;
     points.reserve(display_count_ * 2);
 
     // 生成点序列 - 为每个比特添加两个点，形成矩形信号
