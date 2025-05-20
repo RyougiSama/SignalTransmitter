@@ -9,9 +9,9 @@ TxtModel::TxtModel(QObject *parent)
 TxtModel::~TxtModel()
 {}
 
-bool TxtModel::LoadTxtFile(const QString &file_path)
+bool TxtModel::LoadTxtFile(const QString &file_name)
 {
-    QFile file(file_path);
+    QFile file(file_name);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(static_cast<QWidget *>(parent()), "Error", QString("Cannot open file: %1")
                              .arg(file.errorString()));
@@ -23,9 +23,9 @@ bool TxtModel::LoadTxtFile(const QString &file_path)
     return true;
 }
 
-bool TxtModel::SaveTxtFile(const QString &file_path)
+bool TxtModel::SaveTxtFile(const QString &file_name)
 {
-    QFile file(file_path);
+    QFile file(file_name);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::warning(static_cast<QWidget *>(parent()), "Error", QString("Cannot open file: %1")
                              .arg(file.errorString()));
@@ -65,20 +65,20 @@ void TxtModel::ModulateTxtFile(const QString &modulate_t)
     // 根据采样率自动调整载波参数
     const double ask_high{ 1.0 }, ask_low{ 0.0 };       // ASK高低电平
     const double carrier_freq_factor = 0.1;  // 载波频率为采样率的10%
-    
+
     // 载波参数 - 自动根据采样率调整
     const double base_carrier_freq = kSampleRate * carrier_freq_factor;
     const double ask_f0 = base_carrier_freq;    // ASK载波频率
     const double psk_f = base_carrier_freq;     // PSK载波频率
-    
+
     const auto sample_rate{ kSampleRate };
     const auto samples_per_bit{ kSamplesPerBit };
-    
+
     // 计算预期数据大小并预分配内存
     const qsizetype expected_size = txt_encoded_data_.size() * samples_per_bit;
     txt_modulated_data.clear();
     txt_modulated_data.reserve(expected_size);
-    
+
     if (modulate_t.compare("ASK", Qt::CaseInsensitive) == 0) {
         // 振幅键控
         // 预计算一个比特周期内的正弦波形状
@@ -118,3 +118,32 @@ void TxtModel::ModulateTxtFile(const QString &modulate_t)
     }
 }
 
+void TxtModel::SaveEncodedFile(const QString &file_name)
+{
+    QFile file(file_name);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(static_cast<QWidget *>(parent()), "Error", QString("Cannot open file: %1")
+                             .arg(file.errorString()));
+        return;
+    }
+    QTextStream out(&file);
+    for (auto bit : txt_encoded_data_) {
+        out << bit;
+    }
+    file.close();
+}
+
+void TxtModel::SaveModulatedFile(const QString &file_name)
+{
+    QFile file(file_name);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(static_cast<QWidget *>(parent()), "Error", QString("Cannot open file: %1")
+                             .arg(file.errorString()));
+        return;
+    }
+    QTextStream out(&file);
+    for (auto sample : txt_modulated_data) {
+        out << sample << " ";
+    }
+    file.close();
+}

@@ -25,4 +25,6 @@ private slots:
     void on_btn_save_txt_clicked();
     void on_btn_encode_clicked();
     void on_btn_modulate_clicked();
+    void on_btn_save_encoded_file_clicked();
+    void on_btn_save_modulated_file_clicked();
 };

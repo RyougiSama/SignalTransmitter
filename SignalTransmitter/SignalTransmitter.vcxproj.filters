@@ -43,12 +43,18 @@
     <ClCompile Include="txtmodel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="timeviewmodulated.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="timeviewencoded.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="txtmodel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="timeviewmodulated.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

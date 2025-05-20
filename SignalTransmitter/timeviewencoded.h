@@ -16,11 +16,6 @@ public:
 
     void UpdateView();
 
-    // 设置视图显示范围，缩放级别
-    void setViewRange(int start_idx, int display_count);
-    // 重置视图显示全部波形
-    void resetView();
-
 protected:
     // 重写鼠标滚轮事件处理
     void wheelEvent(QWheelEvent *event) override;

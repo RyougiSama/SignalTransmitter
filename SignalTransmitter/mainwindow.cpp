@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ui->label_sample_rate->setText("采样率: " + QString::number(txt_model_->kSampleRate) + " Hz");
     ui->time_view_encoded->set_txt_model(txt_model_);
+    ui->time_view_modulated->set_txt_model(txt_model_);
 }
 
 MainWindow::~MainWindow()
@@ -64,5 +65,23 @@ void MainWindow::on_btn_modulate_clicked()
     }
     ui->textBrowser_modulated->setText(mod_str.trimmed());
     ui->btn_save_modulated_file->setEnabled(true);
+    // 更新调制波形
+    ui->time_view_modulated->set_modulation_type(ui->comboBox_modulation->currentText());
+    ui->time_view_modulated->UpdateView();
 }
 
+void MainWindow::on_btn_save_encoded_file_clicked()
+{
+    QString file_name = QFileDialog::getSaveFileName(this, "Save Encoded File", "", "Text Files (*.txt)");
+    if (!file_name.isEmpty()) {
+        txt_model_->SaveEncodedFile(file_name);
+    }
+}
+
+void MainWindow::on_btn_save_modulated_file_clicked()
+{
+    QString file_name = QFileDialog::getSaveFileName(this, "Save Modulated File", "", "Text Files (*.txt)");
+    if (!file_name.isEmpty()) {
+        txt_model_->SaveModulatedFile(file_name);
+    }
+}

@@ -160,37 +160,3 @@ void TimeViewEncoded::wheelEvent(QWheelEvent *event)
     // 阻止事件继续传递
     event->accept();
 }
-
-void TimeViewEncoded::setViewRange(int start_idx, int display_count)
-{
-    if (!txt_model_ || txt_model_->get_txt_encoded_data().isEmpty())
-        return;
-
-    const auto total_bits = txt_model_->get_txt_encoded_data().size();
-
-    // 边界检查
-    start_index_ = qBound(0, start_idx, total_bits - 1);
-    display_count_ = qBound(10, display_count, qMin(kMaxDisplayCount, total_bits));
-
-    // 确保不超出数据范围
-    if (start_index_ + display_count_ > total_bits) {
-        start_index_ = qMax(0, total_bits - display_count_);
-    }
-
-    UpdateView();
-}
-
-void TimeViewEncoded::resetView()
-{
-    if (!txt_model_ || txt_model_->get_txt_encoded_data().isEmpty())
-        return;
-
-    const auto total_bits = txt_model_->get_txt_encoded_data().size();
-
-    // 显示所有数据或最大显示数量
-    display_count_ = qMin(kMaxDisplayCount, total_bits);
-    // 从0开始显示
-    start_index_ = 0;
-
-    UpdateView();
-}
