@@ -22,8 +22,9 @@ public:
     void SaveEncodedFile(const QString &file_name);
     void SaveModulatedFile(const QString &file_name);
 
-    static constexpr double kSampleRate{ 800.0 };
-    static constexpr qsizetype kSamplesPerBit { 5 };
+    static constexpr double kSampleRate{ 1600.0 };
+    static constexpr qsizetype kSamplesPerBit { 16 };
+    static constexpr double kCarrierFreq{ 200 };
 
 private:
     QString txt_raw_data_;

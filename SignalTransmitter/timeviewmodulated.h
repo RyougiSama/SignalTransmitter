@@ -14,7 +14,6 @@ public:
 
     void set_txt_model(TxtModel *txt_model_ptr) { txt_model_ = txt_model_ptr; }
     void set_modulation_type(const QString &modulation_type) { modulation_type_ = modulation_type; }
-    QString get_modulation_type() const { return modulation_type_; }
 
     void UpdateView();
 

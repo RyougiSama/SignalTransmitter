@@ -8,7 +8,9 @@ MainWindow::MainWindow(QWidget *parent)
     , txt_model_(new TxtModel(this))
 {
     ui->setupUi(this);
-    ui->label_sample_rate->setText("采样率: " + QString::number(txt_model_->kSampleRate) + " Hz");
+    ui->label_sample_rate->setText("采样率: " + QString::number(txt_model_->kSampleRate) + " Hz"
+    + " 传信率: " + QString::number(txt_model_->kSampleRate / txt_model_->kSamplesPerBit) + " bps"
+    + " 载波: " + QString::number(txt_model_->kCarrierFreq) + " Hz");
     ui->time_view_encoded->set_txt_model(txt_model_);
     ui->time_view_modulated->set_txt_model(txt_model_);
 }

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/MainWindow">
         <file>Resource/note_icon.png</file>
+        <file>Resource/network.png</file>
     </qresource>
 </RCC>

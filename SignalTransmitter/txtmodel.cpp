@@ -62,14 +62,10 @@ void TxtModel::EncodeTxtFile(const QString &encode_t)
 
 void TxtModel::ModulateTxtFile(const QString &modulate_t)
 {
-    // 根据采样率自动调整载波参数
     const double ask_high{ 1.0 }, ask_low{ 0.0 };       // ASK高低电平
-    const double carrier_freq_factor = 0.1;  // 载波频率为采样率的10%
-
-    // 载波参数 - 自动根据采样率调整
-    const double base_carrier_freq = kSampleRate * carrier_freq_factor;
-    const double ask_f0 = base_carrier_freq;    // ASK载波频率
-    const double psk_f = base_carrier_freq;     // PSK载波频率
+    // 载波参数
+    const double ask_f0 = kCarrierFreq;    // ASK载波频率
+    const double psk_f = kCarrierFreq;     // PSK载波频率
 
     const auto sample_rate{ kSampleRate };
     const auto samples_per_bit{ kSamplesPerBit };

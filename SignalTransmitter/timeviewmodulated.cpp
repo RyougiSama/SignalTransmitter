@@ -27,19 +27,16 @@ TimeViewModulated::TimeViewModulated(QWidget *parent)
 
     auto axisY = new QValueAxis();
     axisY->setTitleText("Amplitude");
-    axisY->setRange(-1.2, 1.2);  // 调制后信号通常在-1到1之间
-    axisY->setTickCount(9);
-
+    axisY->setRange(-1.2, 1.2);
+    axisY->setTickCount(8);
     // 添加坐标轴到图表
     chart->addAxis(axisX, Qt::AlignBottom);
     chart->addAxis(axisY, Qt::AlignLeft);
     disp_series_->attachAxis(axisX);
     disp_series_->attachAxis(axisY);
-
     // 设置图表到视图
     setChart(chart);
     setRenderHint(QPainter::Antialiasing);
-
     // 启用鼠标追踪，以便能够实时更新鼠标位置
     setMouseTracking(true);
 }
@@ -178,7 +175,7 @@ void TimeViewModulated::CalculateYAxisRange()
         if (axisY) {
             if (modulation_type_.compare("ASK", Qt::CaseInsensitive) == 0) {
                 // ASK调制通常是0到1的振幅范围
-                axisY->setRange(-0.2, 1.2);
+                axisY->setRange(-1.2, 1.2);
             } else if (modulation_type_.compare("PSK", Qt::CaseInsensitive) == 0) {
                 // PSK调制通常是-1到1的振幅范围
                 axisY->setRange(-1.2, 1.2);
