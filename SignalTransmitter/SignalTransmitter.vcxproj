@@ -92,6 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="networkmodel.cpp" />
     <ClCompile Include="timeviewencoded.cpp" />
     <ClCompile Include="timeviewmodulated.cpp" />
     <ClCompile Include="txtmodel.cpp" />
@@ -107,6 +108,7 @@
     <QtUic Include="mainwindow.ui" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="networkmodel.h" />
     <ClInclude Include="resource.h" />
     <QtMoc Include="timeviewmodulated.h" />
     <QtMoc Include="txtmodel.h" />
