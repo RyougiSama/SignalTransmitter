@@ -13,13 +13,16 @@ MainWindow::MainWindow(QWidget *parent)
     + " 传信率: " + QString::number(txt_model_->kSampleRate / txt_model_->kSamplesPerBit) + " bps"
     + " 载波: " + QString::number(txt_model_->kCarrierFreq) + " Hz");
     ui->time_view_encoded->set_txt_model(txt_model_);
-    ui->time_view_modulated->set_txt_model(txt_model_);    // Connect
+    ui->time_view_modulated->set_txt_model(txt_model_);
+
+    // Connect
     connect(network_model_, &NetworkModel::connectionEstablished, [this]() {
         ui->textBrowser_link_info->append("连接已建立");
-    });    connect(network_model_, &NetworkModel::transferProgress, [this](qint64 bytes_sent, qint64 total_bytes) {
+    });
+
+    connect(network_model_, &NetworkModel::transferProgress, [this](qint64 bytes_sent, qint64 total_bytes) {
         static int last_progress = -1;
         int progress = static_cast<int>((bytes_sent * 100) / total_bytes);
-        
         // 只在进度变化超过1%时更新显示，避免过于频繁的更新
         if (progress != last_progress && (progress - last_progress >= 1 || progress == 100)) {
             ui->textBrowser_link_info->append(QString("传输进度: %1% (%2/%3 字节)")
@@ -166,8 +169,6 @@ void MainWindow::on_btn_start_trans_clicked()
         QMessageBox::warning(this, "端口未监听", "请先启动端口监听。");
         return;
     }
-    
-    // 检查是否有客户端连接
     if (network_model_->get_transfer_state() == NetworkModel::kTransferring) {
         QMessageBox::warning(this, "传输进行中", "文件正在传输中，请等待完成。");
         return;

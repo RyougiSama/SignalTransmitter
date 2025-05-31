@@ -128,7 +128,7 @@ void NetworkModel::SlotSocketDisconnected()
     bytes_written_ = 0;
     header_size_ = 0;
     file_bytes_written_ = 0;
-    
+
     socket_ = nullptr;
 }
 
@@ -139,20 +139,20 @@ void NetworkModel::SlotBytesWritten(qint64 bytes)
     }
 
     bytes_written_ += bytes;
-    
+
     // 如果还在发送头部数据，不更新文件传输进度
     if (bytes_written_ <= header_size_) {
         return;
     }
-    
+
     // 计算实际的文件数据传输字节数
     file_bytes_written_ = bytes_written_ - header_size_;
-    
+
     // 确保不超过文件大小
     if (file_bytes_written_ > total_bytes_) {
         file_bytes_written_ = total_bytes_;
     }
-    
+
     emit transferProgress(file_bytes_written_, total_bytes_);
 
     // 继续发送下一块
