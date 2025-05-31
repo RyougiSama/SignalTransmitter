@@ -36,4 +36,7 @@ private:
 
 private slots:
     void SlotNewConnection();
+
+signals:
+    void connectionEstablished();
 };

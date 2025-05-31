@@ -36,6 +36,6 @@ void NetworkModel::SlotNewConnection()
 {
     if (server_->hasPendingConnections()) {
         socket_ = server_->nextPendingConnection();
-        qDebug() << "New connection established";
+        emit connectionEstablished();
     }
 }

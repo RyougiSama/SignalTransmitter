@@ -15,7 +15,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->time_view_encoded->set_txt_model(txt_model_);
     ui->time_view_modulated->set_txt_model(txt_model_);
     // Connect
-    
+    connect(network_model_, &NetworkModel::connectionEstablished, [this]() {
+        ui->textBrowser_link_info->append("连接已建立");
+            });
 }
 
 MainWindow::~MainWindow()
