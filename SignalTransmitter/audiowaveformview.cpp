@@ -12,8 +12,7 @@ AudioWaveformView::AudioWaveformView(QWidget *parent)
 }
 
 AudioWaveformView::~AudioWaveformView()
-{
-}
+{}
 
 void AudioWaveformView::InitChart()
 {
@@ -27,13 +26,13 @@ void AudioWaveformView::InitChart()
     chart->legend()->hide();
     chart->addSeries(waveform_series_);
     // 设置波形样式
-    QPen pen(Qt::blue);
+    QPen pen(Qt::red);
     pen.setWidth(1);
     waveform_series_->setPen(pen);
     // 配置X轴（时间轴）
     axis_x_->setTitleText("Time (s)");
     axis_x_->setRange(0, kDisplayDuration);
-    axis_x_->setTickCount(7);
+    axis_x_->setTickCount(6);
       // 配置Y轴（振幅轴）
     axis_y_->setTitleText("Amplitude");
     axis_y_->setRange(-1.0, 1.0);
@@ -113,7 +112,7 @@ void AudioWaveformView::UpdateDisplay()
     // 准备显示点
     QList<QPointF> points;
     points.reserve(sample_buffer_.size());
-    // 简单的线性时间分布：将样本均匀分布在0到3秒的时间轴上
+    // 将样本均匀分布在时间轴上
     const double time_per_sample = kDisplayDuration / kMaxDisplayPoints;
     for (int i = 0; i < sample_buffer_.size(); ++i) {
         const double time = i * time_per_sample;
@@ -142,4 +141,3 @@ void AudioWaveformView::ClearDisplay()
     waveform_series_->clear();
     axis_x_->setRange(0, kDisplayDuration);
 }
-

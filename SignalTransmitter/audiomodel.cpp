@@ -1,4 +1,5 @@
 ﻿#include "audiomodel.h"
+#include "audiowaveformview.h"
 
 AudioModel::AudioModel(QObject *parent)
     : QObject(parent)
@@ -97,7 +98,7 @@ bool AudioModel::StartRecording()
                 // 检查是否有足够数据进行实时显示
                 const int bytes_per_sample = audio_format_.bytesPerSample();
                 const int frame_size = bytes_per_sample * audio_format_.channelCount();
-                const int target_samples = audio_format_.sampleRate() * 0.05; // 0.05秒数据
+                const int target_samples = audio_format_.sampleRate() * AudioWaveformView::kDisplayDuration;
                 const int target_bytes = target_samples * frame_size;
                 if (temp_buffer_.size() >= target_bytes) {
                     // 发射实时数据信号

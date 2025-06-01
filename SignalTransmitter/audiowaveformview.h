@@ -18,6 +18,9 @@ public:
     void StopDisplay();
     void ClearDisplay();
 
+public:
+    static constexpr double kDisplayDuration{ 0.05 };    // 显示时长
+
 private:
     void InitChart();
     void UpdateDisplay();
@@ -29,9 +32,7 @@ private:
     QValueAxis *axis_y_;    // 显示参数
     QList<double> sample_buffer_;
     static constexpr int kMaxDisplayPoints{ 1000 };     // 最大显示点数
-    static constexpr double kDisplayDuration{ 3.0 };    // 显示时长3秒
     // 状态控制
     QAudioFormat current_format_;
     bool is_displaying_{ false };
 };
-
