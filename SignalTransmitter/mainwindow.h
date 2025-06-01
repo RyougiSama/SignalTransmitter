@@ -39,4 +39,5 @@ private slots:
     void on_btn_start_trans_clicked();
     void on_btn_refresh_devices_clicked();
     void on_btn_record_switch_clicked(bool isChecked);
+    void on_btn_save_recorded_file_clicked();
 };

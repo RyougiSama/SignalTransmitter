@@ -17,6 +17,14 @@ MainWindow::MainWindow(QWidget *parent)
     ui->time_view_modulated->set_txt_model(txt_model_);
     // 初始化音频设置
     InitAudioSettings();
+    // 接音频模型的录音时长信号
+    connect(audio_model_, &AudioModel::RecordingDurationChanged, [this](int seconds) {
+        int minutes = seconds / 60;
+        int secs = seconds % 60;
+        ui->label_recording_duration->setText(QString("录音时长: %1:%2")
+                                              .arg(minutes, 2, 10, QChar('0'))
+                                              .arg(secs, 2, 10, QChar('0')));
+            });
     // 连接网络模型的信号到槽
     connect(network_model_, &NetworkModel::connectionEstablished, [this](const QString &client_info) {
         ui->textBrowser_link_info->append("连接已建立");
@@ -221,7 +229,13 @@ void MainWindow::on_btn_record_switch_clicked(bool isChecked)
             ui->btn_record_switch->setChecked(false);
             return;
         }
+        // 开始录音
+        if (!audio_model_->StartRecording()) {
+            QMessageBox::warning(this, "录音启动失败", "无法启动录音功能，请检查音频设备状态。");
+            ui->btn_record_switch->setChecked(false);
+        }
 
+        ui->label_recording_duration->setText(QString("录音时长: 00:00"));
         ui->btn_record_switch->setText("停止录音");
         // 禁用参数选择控件
         ui->comboBox_audio_devices->setEnabled(false);
@@ -230,7 +244,14 @@ void MainWindow::on_btn_record_switch_clicked(bool isChecked)
         ui->comboBox_channel_count->setEnabled(false);
         ui->btn_refresh_devices->setEnabled(false);
     } else {
-
+        // 停止录音
+        audio_model_->StopRecording();
+        // 显示录音完成信息
+        const auto recorded_data = audio_model_->get_recorded_data();
+        if (!recorded_data.isEmpty()) {
+            QMessageBox::information(this, "录音完成",
+                                     QString("录音已保存到缓冲区，数据大小: %1 KB").arg(recorded_data.size() / 1024.0, 0, 'f', 2));
+        }
 
         ui->btn_record_switch->setText("开始录音");
         // 启用参数选择控件
@@ -239,5 +260,29 @@ void MainWindow::on_btn_record_switch_clicked(bool isChecked)
         ui->comboBox_sample_rate->setEnabled(true);
         ui->comboBox_channel_count->setEnabled(true);
         ui->btn_refresh_devices->setEnabled(true);
+    }
+}
+
+void MainWindow::on_btn_save_recorded_file_clicked()
+{
+    if (ui->btn_record_switch->isChecked()) {
+        QMessageBox::warning(this, "保存失败", "录音正在进行中，请先停止录音。");
+        return;
+    }
+    const auto recorded_data = audio_model_->get_recorded_data();
+    if (recorded_data.isEmpty()) {
+        QMessageBox::warning(this, "保存失败", "没有录音数据可以保存。");
+        return;
+    }
+    const auto file_name = QFileDialog::getSaveFileName(this, "保存录音文件", "", "WAV Files (*.wav)");
+    if (file_name.isEmpty()) {
+        return;
+    }
+
+    if (audio_model_->SaveRecordedWavFile(file_name)) {
+        QMessageBox::information(this, "保存成功",
+                                 QString("录音文件已保存: %1").arg(file_name));
+    } else {
+        QMessageBox::warning(this, "保存失败", "无法保存录音文件，请检查文件路径和权限。");
     }
 }
