@@ -202,3 +202,42 @@ void MainWindow::on_btn_refresh_devices_clicked()
 {
     InitAudioSettings();
 }
+
+void MainWindow::on_btn_record_switch_clicked(bool isChecked)
+{
+    if (isChecked) {
+        const auto device = ui->comboBox_audio_devices->currentText();
+        const auto format = ui->comboBox_sample_format->currentText();
+        const auto sample_rate = ui->comboBox_sample_rate->currentText();
+        const auto channel = ui->comboBox_channel_count->currentText();
+
+        if (device.isEmpty()) {
+            QMessageBox::warning(this, "录音错误", "请选择一个有效的录音设备。");
+            ui->btn_record_switch->setChecked(false);
+            return;
+        }
+        if (!audio_model_->SetAudioSettings(device, format, sample_rate, channel)) {
+            QMessageBox::warning(this, "参数设置失败", "无法应用所选的音频参数。请检查设备兼容性或参数选择。");
+            ui->btn_record_switch->setChecked(false);
+            return;
+        }
+
+        ui->btn_record_switch->setText("停止录音");
+        // 禁用参数选择控件
+        ui->comboBox_audio_devices->setEnabled(false);
+        ui->comboBox_sample_format->setEnabled(false);
+        ui->comboBox_sample_rate->setEnabled(false);
+        ui->comboBox_channel_count->setEnabled(false);
+        ui->btn_refresh_devices->setEnabled(false);
+    } else {
+
+
+        ui->btn_record_switch->setText("开始录音");
+        // 启用参数选择控件
+        ui->comboBox_audio_devices->setEnabled(true);
+        ui->comboBox_sample_format->setEnabled(true);
+        ui->comboBox_sample_rate->setEnabled(true);
+        ui->comboBox_channel_count->setEnabled(true);
+        ui->btn_refresh_devices->setEnabled(true);
+    }
+}

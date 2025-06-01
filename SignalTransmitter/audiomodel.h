@@ -14,6 +14,7 @@ public:
     ~AudioModel();
 
     QStringList AvaiableAudioDevices() const;
+    bool SetAudioSettings(const QString &device, const QString &format, const QString &sample_rate, const QString &channel);
 
 private:
     QAudioDevice current_device_;
