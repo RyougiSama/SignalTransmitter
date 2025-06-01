@@ -16,8 +16,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->time_view_modulated->set_txt_model(txt_model_);
 
     // Connect
-    connect(network_model_, &NetworkModel::connectionEstablished, [this]() {
+    connect(network_model_, &NetworkModel::connectionEstablished, [this](const QString &client_info) {
         ui->textBrowser_link_info->append("连接已建立");
+        ui->textBrowser_link_info->append(QString("客户端: %1").arg(client_info));
     });
 
     connect(network_model_, &NetworkModel::transferProgress, [this](qint64 bytes_sent, qint64 total_bytes) {
@@ -155,7 +156,11 @@ void MainWindow::on_btn_load_trans_file_clicked()
 {
     const auto file_name = QFileDialog::getOpenFileName(this, "Open Transmit File", "", "Text Files (*.txt)");
     ui->lineEdit_trans_file_path->setText(file_name);
-
+    if (file_name.isEmpty()) {
+        return;
+    }
+    network_model_->set_preview_file(file_name);
+    ui->textBrowser_txt_preview->setText(network_model_->get_preview_file());
 }
 
 void MainWindow::on_btn_start_trans_clicked()

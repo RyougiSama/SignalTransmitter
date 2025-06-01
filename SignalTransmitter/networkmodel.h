@@ -39,15 +39,20 @@ public:
     void StartFileTransfer(const QString &file_path);
     TransferState_t get_transfer_state() const { return transfer_state_; }
 
+    void set_preview_file(const QString &file_path);
+    const QString &get_preview_file() const { return preview_file_; }
+
 private:
-    QTcpServer *server_;
+    QTcpServer *server_{ nullptr };
     QTcpSocket *socket_{ nullptr };
-    QFile *transfer_file_{ nullptr };    PortState_t port_state_{ kNotListening };
+    QFile *transfer_file_{ nullptr };
+    PortState_t port_state_{ kNotListening };
     TransferState_t transfer_state_{ kIdle };
     qint64 total_bytes_{ 0 };
     qint64 bytes_written_{ 0 };
     qint64 header_size_{ 0 };
     qint64 file_bytes_written_{ 0 };
+    QString preview_file_;
 
     void SendNextChunk();
 
@@ -57,7 +62,7 @@ private slots:
     void SlotBytesWritten(qint64 bytes);
 
 signals:
-    void connectionEstablished();
+    void connectionEstablished(const QString &client_info);
     void transferProgress(qint64 bytes_sent, qint64 total_bytes);
     void transferCompleted();
     void transferError(const QString &error_message);

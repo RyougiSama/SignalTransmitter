@@ -315,9 +315,9 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>380</y>
+         <y>240</y>
          <width>276</width>
-         <height>161</height>
+         <height>301</height>
         </rect>
        </property>
        <property name="title">
@@ -345,18 +345,18 @@
       <widget class="QGroupBox" name="groupBox_7">
        <property name="geometry">
         <rect>
-         <x>350</x>
-         <y>40</y>
-         <width>276</width>
-         <height>161</height>
+         <x>330</x>
+         <y>10</y>
+         <width>431</width>
+         <height>201</height>
         </rect>
        </property>
        <property name="title">
-        <string>服务器地址信息</string>
+        <string>传输文本预览</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_7">
         <item row="0" column="0">
-         <widget class="QTextBrowser" name="textBrowser_2"/>
+         <widget class="QTextBrowser" name="textBrowser_txt_preview"/>
         </item>
        </layout>
       </widget>

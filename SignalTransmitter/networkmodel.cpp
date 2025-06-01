@@ -40,7 +40,10 @@ void NetworkModel::SlotNewConnection()
         socket_ = server_->nextPendingConnection();
         connect(socket_, &QTcpSocket::disconnected, this, &NetworkModel::SlotSocketDisconnected);
         connect(socket_, &QTcpSocket::bytesWritten, this, &NetworkModel::SlotBytesWritten);
-        emit connectionEstablished();
+        const auto client_info = QString("%1:%2")
+            .arg(socket_->peerAddress().toString())
+            .arg(socket_->peerPort());
+        emit connectionEstablished(client_info);
     }
 }
 
@@ -50,19 +53,19 @@ void NetworkModel::StartFileTransfer(const QString &file_path)
         emit transferError("无连接的客户端");
         return;
     }
-
     if (transfer_file_) {
         transfer_file_->close();
         delete transfer_file_;
     }
-
     transfer_file_ = new QFile(file_path, this);
     if (!transfer_file_->open(QIODevice::ReadOnly)) {
         emit transferError("无法打开文件: " + file_path);
         delete transfer_file_;
         transfer_file_ = nullptr;
         return;
-    }    QFileInfo file_info(file_path);
+    }
+
+    QFileInfo file_info(file_path);
     total_bytes_ = file_info.size();
     bytes_written_ = 0;
     file_bytes_written_ = 0;
@@ -159,4 +162,19 @@ void NetworkModel::SlotBytesWritten(qint64 bytes)
     if (file_bytes_written_ < total_bytes_) {
         SendNextChunk();
     }
+}
+
+void NetworkModel::set_preview_file(const QString &file_path)
+{
+    preview_file_.clear();
+
+    QFile file(file_path);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        preview_file_ = QString("无法打开文件: %1").arg(file.errorString());
+        return;
+    }
+
+    QTextStream in(&file);
+    preview_file_ = in.readAll();
+    file.close();
 }
