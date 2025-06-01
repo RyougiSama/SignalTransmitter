@@ -93,6 +93,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="audiomodel.cpp" />
+    <ClCompile Include="audiowaveformview.cpp" />
     <ClCompile Include="networkmodel.cpp" />
     <ClCompile Include="timeviewencoded.cpp" />
     <ClCompile Include="timeviewmodulated.cpp" />
@@ -111,6 +112,7 @@
   <ItemGroup>
     <QtMoc Include="networkmodel.h" />
     <QtMoc Include="audiomodel.h" />
+    <QtMoc Include="audiowaveformview.h" />
     <ClInclude Include="resource.h" />
     <QtMoc Include="timeviewmodulated.h" />
     <QtMoc Include="txtmodel.h" />

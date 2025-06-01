@@ -181,7 +181,7 @@
       <attribute name="title">
        <string>音频采集</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_11" columnstretch="1,2">
+      <layout class="QGridLayout" name="gridLayout_11" rowstretch="1,1" columnstretch="1,2">
        <item row="0" column="0">
         <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,2">
          <item>
@@ -445,7 +445,7 @@
          <property name="title">
           <string>录音控制</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_9">
+         <layout class="QGridLayout" name="gridLayout_9" columnstretch="1,2">
           <item row="0" column="0">
            <widget class="QPushButton" name="btn_record_switch">
             <property name="sizePolicy">
@@ -456,7 +456,7 @@
             </property>
             <property name="font">
              <font>
-              <pointsize>9</pointsize>
+              <pointsize>12</pointsize>
              </font>
             </property>
             <property name="cursor">
@@ -480,8 +480,8 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="2" rowspan="3">
-           <widget class="QGraphicsView" name="graphicsView"/>
+          <item row="0" column="1" rowspan="3">
+           <widget class="AudioWaveformView" name="audio_waveform_view"/>
           </item>
           <item row="1" column="0">
            <widget class="QPushButton" name="btn_save_recorded_file">
@@ -493,7 +493,7 @@
             </property>
             <property name="font">
              <font>
-              <pointsize>9</pointsize>
+              <pointsize>12</pointsize>
              </font>
             </property>
             <property name="cursor">
@@ -692,6 +692,11 @@
    <class>TimeViewModulated</class>
    <extends>QGraphicsView</extends>
    <header>timeviewmodulated.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AudioWaveformView</class>
+   <extends>QGraphicsView</extends>
+   <header>audiowaveformview.h</header>
   </customwidget>
  </customwidgets>
  <resources>
