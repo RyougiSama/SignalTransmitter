@@ -40,7 +40,7 @@ bool AudioModel::SetAudioSettings(const QString &device, const QString &format, 
         }
     }
     // 2. 设置采样格式
-    QAudioFormat::SampleFormat sf;
+    auto sf{ QAudioFormat::Int16 };
     if (format == "PCM 16-bit") {
         sf = QAudioFormat::Int16;
     } else if (format == "PCM float") {
@@ -77,6 +77,7 @@ bool AudioModel::StartRecording()
         return false;
     }
     recorded_data_.clear();
+    temp_buffer_.clear();
     recording_duration_ = 0;
     // 开始录音
     audio_io_ = audio_source_->start();
@@ -87,11 +88,28 @@ bool AudioModel::StartRecording()
     }
     connect(audio_io_, &QIODevice::readyRead, [this]() {
         if (audio_io_) {
-            recorded_data_.append(audio_io_->readAll());
+            const QByteArray new_data = audio_io_->readAll();
+            if (!new_data.isEmpty()) {
+                // 保存到录音数据
+                recorded_data_.append(new_data);
+                // 添加到实时显示缓冲区
+                temp_buffer_.append(new_data);
+                // 检查是否有足够数据进行实时显示
+                const int bytes_per_sample = audio_format_.bytesPerSample();
+                const int frame_size = bytes_per_sample * audio_format_.channelCount();
+                const int target_samples = audio_format_.sampleRate() * 0.05; // 0.05秒数据
+                const int target_bytes = target_samples * frame_size;
+                if (temp_buffer_.size() >= target_bytes) {
+                    // 发射实时数据信号
+                    emit AudioDataReady(temp_buffer_, audio_format_);
+                    // 清空缓冲区
+                    temp_buffer_.clear();
+                }
+            }
         }
-            });
+    });
+    // 启动定时器
     duration_timer_->start(1000);
-
     return true;
 }
 
@@ -105,7 +123,9 @@ void AudioModel::StopRecording()
         delete audio_source_;
         audio_source_ = nullptr;
     }
-    audio_source_ = nullptr;
+    audio_io_ = nullptr;
+    // 清空临时缓冲区
+    temp_buffer_.clear();
 }
 
 bool AudioModel::SaveRecordedWavFile(const QString &file_path) const

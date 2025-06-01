@@ -5,6 +5,7 @@
 #include "txtmodel.h"
 #include "networkmodel.h"
 #include "audiomodel.h"
+#include "audiowaveformview.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindowClass; };

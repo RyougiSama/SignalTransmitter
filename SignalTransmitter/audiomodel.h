@@ -37,6 +37,8 @@ private:
     QByteArray recorded_data_;
     QTimer *duration_timer_;
     int recording_duration_{ 0 };
+    // 实时显示相关
+    QByteArray temp_buffer_;
 
 private slots:
     void SlotDurationUpdate() {
@@ -46,5 +48,6 @@ private slots:
 
 signals:
     void RecordingDurationChanged(int seconds);
+    void AudioDataReady(const QByteArray &data, const QAudioFormat &format);
 };
 

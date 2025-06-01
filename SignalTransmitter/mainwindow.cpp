@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->time_view_modulated->set_txt_model(txt_model_);
     // 初始化音频设置
     InitAudioSettings();
-    // 接音频模型的录音时长信号
+    // 连接音频模型的录音时长信号
     connect(audio_model_, &AudioModel::RecordingDurationChanged, [this](int seconds) {
         int minutes = seconds / 60;
         int secs = seconds % 60;
@@ -25,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent)
                                               .arg(minutes, 2, 10, QChar('0'))
                                               .arg(secs, 2, 10, QChar('0')));
             });
+    // 连接音频模型的实时数据信号到波形显示
+    connect(audio_model_, &AudioModel::AudioDataReady, ui->audio_waveform_view, &AudioWaveformView::UpdateWaveform);
     // 连接网络模型的信号到槽
     connect(network_model_, &NetworkModel::connectionEstablished, [this](const QString &client_info) {
         ui->textBrowser_link_info->append("连接已建立");
@@ -234,6 +236,8 @@ void MainWindow::on_btn_record_switch_clicked(bool isChecked)
             QMessageBox::warning(this, "录音启动失败", "无法启动录音功能，请检查音频设备状态。");
             ui->btn_record_switch->setChecked(false);
         }
+        // 开始波形显示
+        ui->audio_waveform_view->StartDisplay();
 
         ui->label_recording_duration->setText(QString("录音时长: 00:00"));
         ui->btn_record_switch->setText("停止录音");
@@ -242,10 +246,11 @@ void MainWindow::on_btn_record_switch_clicked(bool isChecked)
         ui->comboBox_sample_format->setEnabled(false);
         ui->comboBox_sample_rate->setEnabled(false);
         ui->comboBox_channel_count->setEnabled(false);
-        ui->btn_refresh_devices->setEnabled(false);
-    } else {
+        ui->btn_refresh_devices->setEnabled(false);    } else {
         // 停止录音
         audio_model_->StopRecording();
+        // 停止波形显示
+        ui->audio_waveform_view->StopDisplay();
         // 显示录音完成信息
         const auto recorded_data = audio_model_->get_recorded_data();
         if (!recorded_data.isEmpty()) {
