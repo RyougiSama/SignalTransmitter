@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindowClass())
     , txt_model_(new TxtModel(this))
     , network_model_(new NetworkModel(this))
+    , audio_model_(new AudioModel(this))
 {
     ui->setupUi(this);
     ui->label_sample_rate->setText("采样率: " + QString::number(txt_model_->kSampleRate) + " Hz"
@@ -14,8 +15,9 @@ MainWindow::MainWindow(QWidget *parent)
     + " 载波: " + QString::number(txt_model_->kCarrierFreq) + " Hz");
     ui->time_view_encoded->set_txt_model(txt_model_);
     ui->time_view_modulated->set_txt_model(txt_model_);
-
-    // Connect
+    // 初始化音频设置
+    InitAudioSettings();
+    // 连接网络模型的信号到槽
     connect(network_model_, &NetworkModel::connectionEstablished, [this](const QString &client_info) {
         ui->textBrowser_link_info->append("连接已建立");
         ui->textBrowser_link_info->append(QString("客户端: %1").arg(client_info));
@@ -50,6 +52,18 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// 初始化音频设置
+void MainWindow::InitAudioSettings()
+{
+    // 初始化录音设备下拉框
+    ui->comboBox_audio_devices->clear();
+    const auto devices = audio_model_->AvaiableAudioDevices();
+    for (const auto &device : devices) {
+        ui->comboBox_audio_devices->addItem(device);
+    }
+}
+
+// 按钮槽函数实现
 void MainWindow::on_btn_load_txt_clicked()
 {
     auto file_name = QFileDialog::getOpenFileName(this, "Open TXT File", "", "Text Files (*.txt)");
@@ -178,9 +192,13 @@ void MainWindow::on_btn_start_trans_clicked()
         QMessageBox::warning(this, "传输进行中", "文件正在传输中，请等待完成。");
         return;
     }
-
     // 开始传输文件
     ui->btn_start_trans->setEnabled(false);
     ui->textBrowser_link_info->append("开始传输文件: " + file_name);
     network_model_->StartFileTransfer(file_name);
+}
+
+void MainWindow::on_btn_refresh_devices_clicked()
+{
+    InitAudioSettings();
 }

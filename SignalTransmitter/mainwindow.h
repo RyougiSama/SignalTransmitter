@@ -4,6 +4,7 @@
 #include "ui_mainwindow.h"
 #include "txtmodel.h"
 #include "networkmodel.h"
+#include "audiomodel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindowClass; };
@@ -18,9 +19,13 @@ public:
     ~MainWindow();
 
 private:
+    void InitAudioSettings();
+
+private:
     Ui::MainWindowClass *ui;
     TxtModel *txt_model_;
     NetworkModel *network_model_;
+    AudioModel *audio_model_;
 
 private slots:
     void on_btn_load_txt_clicked();
@@ -32,4 +37,5 @@ private slots:
     void on_btn_port_listening_clicked(bool isChecked);
     void on_btn_load_trans_file_clicked();
     void on_btn_start_trans_clicked();
+    void on_btn_refresh_devices_clicked();
 };

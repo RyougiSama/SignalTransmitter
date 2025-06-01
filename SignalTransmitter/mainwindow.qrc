@@ -2,5 +2,10 @@
     <qresource prefix="/MainWindow">
         <file>Resource/note_icon.png</file>
         <file>Resource/network.png</file>
+        <file>Resource/microphone.png</file>
+        <file>Resource/media_control.png</file>
+        <file>Resource/media_control_stop.png</file>
+        <file>Resource/file_save.png</file>
+        <file>Resource/file_open.png</file>
     </qresource>
 </RCC>
