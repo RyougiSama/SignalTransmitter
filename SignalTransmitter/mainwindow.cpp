@@ -55,6 +55,31 @@ MainWindow::MainWindow(QWidget *parent)
         ui->textBrowser_link_info->append("传输错误: " + error_message);
         ui->btn_start_trans->setEnabled(true);
     });
+    // 添加使用说明
+    ui->textBrowser_instructions->setMarkdown(
+        R"(
+## 使用说明
+
+### 文本采集
+1. 加载或手动输入文本。
+2. 选择编码方式，点击“开始编码”。
+3. 选择调制方式，点击“开始调制”。
+4. 可保存原始、编码或调制后的文件。
+
+### 音频采集
+1. 选择音频设备和参数。
+2. 点击“开始录音”按钮进行录音，实时显示波形。
+3. 再次点击停止录音，可保存为WAV文件。
+4. 可打开WAV文件进行播放，显示播放进度。
+
+### 网络传输
+1. 在“服务器操作”中输入端口号，点击“开始监听端口”。
+2. 在接收端启动客户端并连接到此端口。
+3. 点击“选择传输的文件”按钮选择要发送的文件（支持.txt和.wav）。
+4. 点击“开始传输”按钮发送文件。
+5. 传输进度和状态信息将在下方显示。
+)"
+    );
 }
 
 MainWindow::~MainWindow()
@@ -178,13 +203,17 @@ void MainWindow::on_btn_port_listening_clicked(bool isChecked)
 
 void MainWindow::on_btn_load_trans_file_clicked()
 {
-    const auto file_name = QFileDialog::getOpenFileName(this, "Open Transmit File", "", "Text Files (*.txt)");
+    const auto file_name = QFileDialog::getOpenFileName(this, "Open Transmit File", "", "Text Files (*.txt);;WAV Files (*.wav)");
     ui->lineEdit_trans_file_path->setText(file_name);
     if (file_name.isEmpty()) {
         return;
     }
     network_model_->set_preview_file(file_name);
-    ui->textBrowser_txt_preview->setText(network_model_->get_preview_file());
+    if (file_name.endsWith(".txt")) {
+        ui->textBrowser_txt_preview->setText(network_model_->get_preview_file());
+    } else if (file_name.endsWith(".wav")) {
+        ui->textBrowser_txt_preview->setText("WAV文件预览暂时不可用!");
+    }
 }
 
 void MainWindow::on_btn_start_trans_clicked()

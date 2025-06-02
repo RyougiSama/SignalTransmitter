@@ -64,13 +64,11 @@ void NetworkModel::StartFileTransfer(const QString &file_path)
         transfer_file_ = nullptr;
         return;
     }
-
     QFileInfo file_info(file_path);
     total_bytes_ = file_info.size();
     bytes_written_ = 0;
     file_bytes_written_ = 0;
     transfer_state_ = kTransferring;
-
     // 发送文件头信息：文件名长度 + 文件名 + 文件大小
     QByteArray header;
     QDataStream stream(&header, QIODevice::WriteOnly);
@@ -81,7 +79,6 @@ void NetworkModel::StartFileTransfer(const QString &file_path)
 
     header_size_ = header.size();
     socket_->write(header);
-
     // 开始发送文件内容
     SendNextChunk();
 }
@@ -91,11 +88,9 @@ void NetworkModel::SendNextChunk()
     if (!transfer_file_ || !socket_) {
         return;
     }
-
     const qint64 chunk_size = 64 * 1024; // 64KB块大小
     QByteArray chunk = transfer_file_->read(chunk_size);
-
-    if (chunk.isEmpty()) {
+    if (chunk.size() < chunk_size) {
         // 文件传输完成
         transfer_state_ = kTransferCompleted;
         transfer_file_->close();
@@ -104,7 +99,6 @@ void NetworkModel::SendNextChunk()
         emit transferCompleted();
         return;
     }
-
     qint64 bytes_written = socket_->write(chunk);
     if (bytes_written == -1) {
         transfer_state_ = kTransferError;
@@ -119,13 +113,11 @@ void NetworkModel::SlotSocketDisconnected()
         transfer_state_ = kTransferError;
         emit transferError("客户端连接断开");
     }
-
     if (transfer_file_) {
         transfer_file_->close();
         delete transfer_file_;
         transfer_file_ = nullptr;
     }
-
     // 重置传输状态
     total_bytes_ = 0;
     bytes_written_ = 0;
@@ -140,24 +132,18 @@ void NetworkModel::SlotBytesWritten(qint64 bytes)
     if (transfer_state_ != kTransferring) {
         return;
     }
-
     bytes_written_ += bytes;
-
     // 如果还在发送头部数据，不更新文件传输进度
     if (bytes_written_ <= header_size_) {
         return;
     }
-
     // 计算实际的文件数据传输字节数
     file_bytes_written_ = bytes_written_ - header_size_;
-
     // 确保不超过文件大小
     if (file_bytes_written_ > total_bytes_) {
         file_bytes_written_ = total_bytes_;
     }
-
     emit transferProgress(file_bytes_written_, total_bytes_);
-
     // 继续发送下一块
     if (file_bytes_written_ < total_bytes_) {
         SendNextChunk();
@@ -167,13 +153,11 @@ void NetworkModel::SlotBytesWritten(qint64 bytes)
 void NetworkModel::set_preview_file(const QString &file_path)
 {
     preview_file_.clear();
-
     QFile file(file_path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         preview_file_ = QString("无法打开文件: %1").arg(file.errorString());
         return;
     }
-
     QTextStream in(&file);
     preview_file_ = in.readAll();
     file.close();
