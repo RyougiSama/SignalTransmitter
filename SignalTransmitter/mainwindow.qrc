@@ -7,5 +7,6 @@
         <file>Resource/media_control_stop.png</file>
         <file>Resource/file_save.png</file>
         <file>Resource/file_open.png</file>
+        <file>Resource/media_control_close.png</file>
     </qresource>
 </RCC>
