@@ -90,19 +90,16 @@ void NetworkModel::SendNextChunk()
     }
     const qint64 chunk_size = 64 * 1024; // 64KB块大小
     QByteArray chunk = transfer_file_->read(chunk_size);
-    if (chunk.size() < chunk_size) {
-        // 文件传输完成
-        transfer_state_ = kTransferCompleted;
-        transfer_file_->close();
-        delete transfer_file_;
-        transfer_file_ = nullptr;
-        emit transferCompleted();
-        return;
-    }
     qint64 bytes_written = socket_->write(chunk);
     if (bytes_written == -1) {
         transfer_state_ = kTransferError;
         emit transferError("写入套接字失败");
+        // 发生错误时清理文件资源
+        if (transfer_file_) {
+            transfer_file_->close();
+            delete transfer_file_;
+            transfer_file_ = nullptr;
+        }
         return;
     }
 }
@@ -144,6 +141,18 @@ void NetworkModel::SlotBytesWritten(qint64 bytes)
         file_bytes_written_ = total_bytes_;
     }
     emit transferProgress(file_bytes_written_, total_bytes_);
+    // 检查文件是否传输完成
+    if (file_bytes_written_ == total_bytes_) {
+        // 文件传输完成
+        transfer_state_ = kTransferCompleted;
+        if (transfer_file_) {
+            transfer_file_->close();
+            delete transfer_file_;
+            transfer_file_ = nullptr;
+        }
+        emit transferCompleted();
+        return; // 传输完成，不再发送下一块
+    }
     // 继续发送下一块
     if (file_bytes_written_ < total_bytes_) {
         SendNextChunk();
